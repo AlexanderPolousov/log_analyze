@@ -4,7 +4,6 @@ import argparse
 import logging
 import sys
 from pathlib import Path
-from typing import Optional
 
 from analyzer import LogAnalyzer
 
@@ -13,47 +12,36 @@ def parse_args():
     """Настройка парсера аргументов командной строки"""
     parser = argparse.ArgumentParser(
         description="Многопроцессорный анализатор логов с продвинутым логированием",
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
-    
+
     # Основные параметры
     parser.add_argument(
-        '--file',
-        type=Path,
-        required=True,
-        help="Путь к анализируемому лог-файлу"
+        "--file", type=Path, required=True, help="Путь к анализируемому лог-файлу"
     )
     parser.add_argument(
-        '--processes',
+        "--processes",
         type=int,
-        help="Количество worker-процессов (по умолчанию: CPU-1)"
+        help="Количество worker-процессов (по умолчанию: CPU-1)",
     )
     parser.add_argument(
-        '--chunk-size',
-        type=int,
-        default=10,
-        help="Размер чанка для обработки (в MB)"
+        "--chunk-size", type=int, default=10, help="Размер чанка для обработки (в MB)"
     )
 
     # Настройки логирования
     parser.add_argument(
-        '--log-dir',
-        type=Path,
-        default="logs",
-        help="Директория для хранения логов"
+        "--log-dir", type=Path, default="logs", help="Директория для хранения логов"
     )
     parser.add_argument(
-        '--log-level',
-        choices=['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'],
-        default='INFO',
-        help="Уровень детализации логов"
+        "--log-level",
+        choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
+        default="INFO",
+        help="Уровень детализации логов",
     )
     parser.add_argument(
-        '--no-console-log',
-        action='store_true',
-        help="Отключить вывод логов в консоль"
+        "--no-console-log", action="store_true", help="Отключить вывод логов в консоль"
     )
-    
+
     return parser.parse_args()
 
 
@@ -73,14 +61,14 @@ def validate_file(file_path: Path) -> bool:
 def setup_logging(log_dir: Path, log_level: str, no_console: bool) -> None:
     """Глобальная настройка логирования"""
     log_dir.mkdir(exist_ok=True)
-    
+
     logging.basicConfig(
         level=log_level,
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
         handlers=[
-            logging.FileHandler(log_dir / "cli.log", encoding='utf-8'),
-            *([] if no_console else [logging.StreamHandler(sys.stdout)])
-        ]
+            logging.FileHandler(log_dir / "cli.log", encoding="utf-8"),
+            *([] if no_console else [logging.StreamHandler(sys.stdout)]),
+        ],
     )
 
 
@@ -94,14 +82,12 @@ def main():
             sys.exit(1)
 
         analyzer = LogAnalyzer(
-            file_path=args.file,
-            processes=args.processes,
-            log_dir=args.log_dir
+            file_path=args.file, processes=args.processes, log_dir=args.log_dir
         )
         analyzer.chunk_size = args.chunk_size * 1024 * 1024
 
         ips, statuses = analyzer.analyze()
-        
+
         # Вывод результатов
         print("\nРезультаты анализа:")
         print("Топ-5 IP-адресов:", ips.most_common(5))
@@ -114,5 +100,5 @@ def main():
         logging.info("Анализатор завершил работу")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
