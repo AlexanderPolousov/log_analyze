@@ -1,0 +1,10 @@
+[tool.ruff]
+line-length = 120
+select = [
+    "E",   # pycodestyle errors
+    "F",   # pyflakes
+    "B",   # bugbear
+    "I",   # isort (сортировка импортов)
+    "UP",  # pyupgrade (обновление синтаксиса)
+]
+ignore = ["E501"]  # Игнорировать длину строки
