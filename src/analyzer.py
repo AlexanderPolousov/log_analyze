@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Tuple
 
 from tqdm import tqdm
-from utils.logger import setup_logger
+from src.utils.logger import setup_logger
 
 
 class LogAnalyzer:
